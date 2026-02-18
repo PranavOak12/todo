@@ -68,15 +68,6 @@ app.delete("/api/todos/:id", (req, res) => {
 });
 
 /* =======================
-   SPA FALLBACK
-======================= */
-
-// Express 5 compatible catch-all
-app.get(/.*/, (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-
-/* =======================
    START SERVER
 ======================= */
 
