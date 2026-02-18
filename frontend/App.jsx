@@ -4,7 +4,7 @@ function App() {
   const [todos, setTodos] = useState([]);
   const [text, setText] = useState("");
 
-  const API = "http://localhost:3000/api/todos";
+  const API = "https://todo-pkpr.onrender.com/api/todos";
 
 
   useEffect(() => {
