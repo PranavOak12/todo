@@ -4,24 +4,41 @@ const path = require("path");
 const sqlite3 = require("sqlite3").verbose();
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 /* =======================
-   MIDDLEWARE
+   CORS CONFIG
 ======================= */
 
-// ✅ CORS (frontend on 5173)
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://todooo-7hup24pb6-pranavs-projects-53c10624.vercel.app",
+];
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: function (origin, callback) {
+      // allow requests with no origin (Postman, curl, server-side)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST", "DELETE"],
     allowedHeaders: ["Content-Type"],
   })
 );
 
+/* =======================
+   MIDDLEWARE
+======================= */
+
 app.use(express.json());
 
-// serve frontend (only if you have /public)
+// serve frontend (optional)
 app.use(express.static(path.join(__dirname, "public")));
 
 /* =======================
@@ -55,14 +72,16 @@ app.post("/api/todos", (req, res) => {
   db.run(
     "INSERT INTO todos (text) VALUES (?)",
     [text],
-    function () {
+    function (err) {
+      if (err) return res.status(500).json({ error: err.message });
       res.json({ id: this.lastID, text });
     }
   );
 });
 
 app.delete("/api/todos/:id", (req, res) => {
-  db.run("DELETE FROM todos WHERE id = ?", [req.params.id], () => {
+  db.run("DELETE FROM todos WHERE id = ?", [req.params.id], (err) => {
+    if (err) return res.status(500).json({ error: err.message });
     res.json({ success: true });
   });
 });
@@ -72,5 +91,5 @@ app.delete("/api/todos/:id", (req, res) => {
 ======================= */
 
 app.listen(PORT, () => {
-  console.log(`✅ Backend running at http://localhost:${PORT}`);
+  console.log(`✅ Backend running on port ${PORT}`);
 });
