@@ -11,7 +11,6 @@ const PORT = process.env.PORT || 3000;
 ======================= */
 
 const allowedOrigins = [
-  "http://localhost:5173",
   "https://todooo-7hup24pb6-pranavs-projects-53c10624.vercel.app",
 ];
 
